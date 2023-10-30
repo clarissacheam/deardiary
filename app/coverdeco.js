@@ -1,28 +1,33 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Image } from 'react-native';
+import { StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { useState } from 'react';
+import { useState, React } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Canvas, Path } from "@shopify/react-native-skia";
 
-import Button from './components/Button';
-import ImageViewer from './components/ImageViewer';
-import CircleButton from './components/CircleButton';
-import IconButton from './components/IconButton';
-import EmojiPicker from './components/EmojiPicker';
-import EmojiList from './components/EmojiList';
-import react from 'react';
-import EmojiSticker from './components/EmojiSticker';
-import Drawing from './components/Drawing';
-import TextInput from './components/TextInput';
 
-const PlaceholderImage = require('./assets/goodjobcat.jpg');
+import Button from '../components/Button';
+import ImageViewer from '../components/ImageViewer';
+import CircleButton from '../components/CircleButton';
+import IconButton from '../components/IconButton';
+import EmojiPicker from '../components/EmojiPicker';
+import EmojiList from '../components/EmojiList';
+import react from 'react';
+import EmojiSticker from '../components/EmojiSticker';
+import TextInput from '../components/TextInput';
+import Annotations from '../components/Annotations';
+import {StickerList} from '../components/StickerList';
+
+const PlaceholderImage = require('../assets/goodjobcat.jpg');
 
 export default function App() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [showAppOptions, setShowAppOptions] = useState(false);
   const [pickedEmoji, setPickedEmoji] = useState(null);
+  const [stickerItems, setStickerItems] = useState([pickedEmoji]);
+  
+
   // for resetting
   const onReset = () => {
     setShowAppOptions(false);
@@ -33,6 +38,12 @@ export default function App() {
   const onModalClose = () => {
     setIsModalVisible(false);
   };
+  const handleAddSticker = () => {
+    // should be adding the "source" to an array
+    // figure out what pickedEmoji is passed as
+    setStickerItems(stickerItems.concat(pickedEmoji));
+  }
+
   const onSaveImageAsync = async () => {
     // to implement later
   };
@@ -58,10 +69,14 @@ export default function App() {
       <View style={styles.imageContainer}>
         <ImageViewer placeholderImageSource={PlaceholderImage}
         selectedImage={selectedImage} />
-        {pickedEmoji !== null ? <EmojiSticker imageSize={40} stickerSource={pickedEmoji} /> : null}
-        {/* not sure why my drawing isn't showing up sob */}
-        <Drawing/>
-        <TextInput/>
+        
+        <EmojiSticker imageSize={40} stickerSource={pickedEmoji}/>
+        {stickerItems.map((item, index) => {
+          return (
+              <EmojiSticker imageSize={40} stickerSource={item} key={index}/>)
+          }
+        )}
+
       </View>
       {showAppOptions ? ( 
         <View style={styles.optionsContainer}>
@@ -78,7 +93,7 @@ export default function App() {
       </View>
       )}
       <EmojiPicker isVisible={isModalVisible} onClose={onModalClose}>
-        <EmojiList onSelect={setPickedEmoji} onCloseModal={onModalClose}/>
+        <EmojiList onSelect={setPickedEmoji} onCloseModal={onModalClose} handleEmoji={handleAddSticker}/>
       </EmojiPicker>
       <StatusBar style="auto" />
     </View>

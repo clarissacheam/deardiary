@@ -1,25 +1,25 @@
 import { useState } from 'react';
 import { StyleSheet, FlatList, Image, Platform, Pressable } from 'react-native';
+import { StickerList } from './StickerList';
 
-export default function EmojiList({onSelect, onCloseModal}) {
-    const [emoji] = useState([
-        require('../assets/images/vyn1.png'),
-        require('../assets/images/marius3.png'),
-        require('../assets/images/artem1.png'),
-        require('../assets/images/marius2.png'),
-        require('../assets/images/marius.png'),
-        require('../assets/images/luke1.png'),
-    ]);
+
+
+export default function EmojiList({onSelect, onCloseModal, handleEmoji}) {
     return (
         <FlatList
         horizontal showsHorizontalScrollIndicator={Platform.OS==='web'}
-        data={emoji}
+        data={StickerList}
         contentContainerStyle={styles.listContainer}
         renderItem={({item, index}) => {
+            console.log('item =', item);
+            console.log('index =',index);
             return (
                 <Pressable onPress={() => {
+                    console.log('onPress index =', index);
+                    console.log('onPress item= ', item);
                     onSelect(item);
                     onCloseModal();
+                    handleEmoji();
                 }}>
                     <Image source={item} key={index} style={styles.image}/>
                 </Pressable>
